@@ -27,43 +27,40 @@ foreach ($test_data as $cRow){
     $materialcode = $cRow['materialcode'];
     $dimension = [$PHI,$L];
     echo "\$materialcode = $materialcode , \$PHI = $PHI , \$L = $L<br><br>";
-    try {
+    
         if($PHI <= 0){
         #    throw new Exception("The Value of 'PHI' is not valid, please check<br>");       
-            echo "The value of PHI is not valid, Calculation will be incorrect";      
+            echo "The value of PHI is not valid [{$PHI}], Calculation will be incorrect<br>";      
         }elseif($L <= 0){
             #    throw new Exception("The Value of 'L' is not valid, please check<br>");
-            echo "The value of L is not valid, Calculation will be incorrect"; 
+            echo "The value of L is not valid [{$L}], Calculation will be incorrect<br>"; 
         }elseif(!$materialcode){ // $materialcode is empty
-            throw new Exception("Material Code cannot be empty!<br>");
-        }
-
-
-        $objO = new O($materialcode,$PHI,$L);
-
-        $isShapeCodematch = $objO->isShapeCodeMatch($materialcode);
-        $Shape_Code = $objO->getShape_Code();
-        if ($isShapeCodematch != 'yes'){
-            echo "Shape_Code = {$Shape_Code}<br>";
-            echo "It does not match current process, Skipping this input<br>";
+            #throw new Exception("Material Code cannot be empty!<br>");
+            echo "Material Code cannot be empty ! <br>";
         }else{
 
-            $materialType = $objO->getMaterialType();
-            $density = $objO->grabDensitybyMType($materialType);
-            $objO->setDensity($density);
-            $volume = $objO->calVolume();
-            $objO->setVolume($volume);
-            $weight = $objO->calWeight();
-            echo "\$density = $density<br>";
-            echo "\$volume = $volume<br>";
-            echo "\$weight = $weight<br>";
+            $objO = new O($materialcode,$PHI,$L);
+
+            $isShapeCodematch = $objO->isShapeCodeMatch($materialcode);
+            $Shape_Code = $objO->getShape_Code();
+            if ($isShapeCodematch != 'yes'){
+                echo "Current process Shape_Code = {$Shape_Code}<br>";
+                echo "It does not match Shape_Code contained in Material : '{materialcode}'.<br>Skipping this input<br>";
+            }else{
+
+                $materialType = $objO->getMaterialType();
+                $density = $objO->grabDensitybyMType($materialType);
+                $objO->setDensity($density);
+                $volume = $objO->calVolume();
+                $objO->setVolume($volume);
+                $weight = $objO->calWeight();
+                echo "\$density = $density<br>";
+                echo "\$volume = $volume<br>";
+                echo "\$weight = $weight<br>";
+            }
         }
-        echo "===================================================<br>";
         
-    } catch (Exception $e) {
-        echo $e->getMessage();
         echo "===================================================<br>";
-    }
 }
 
 
